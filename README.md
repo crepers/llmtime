@@ -10,36 +10,32 @@ by Nate Gruver, Marc Finzi, Shikai Qiu and Andrew Gordon Wilson (NeurIPS 2023).
 </figure>
 
 ## 🛠 Installation
-Run the following command to install all dependencies in a conda environment named `llmtime`. Change the cuda version for torch if you don't have cuda 11.8. 
+First, create a `.env` file by copying the example and edit it to add your API keys:
+```bash
+cp .env.sample .env
 ```
-source install.sh
+Inside the `.env` file, set the `LLM_PROVIDER` to either `gpt` or `gemini` and provide the corresponding API keys (e.g., `OPENAI_API_KEY` or `GEMINI_API_KEY`).
+
+Next, install the required dependencies using `pip`:
+```bash
+pip install -r requirements.txt
 ```
-After installation, activate the environment with
-```
+It is recommended to use a virtual environment. For example, with conda:
+```bash
+conda create -n llmtime python=3.9
 conda activate llmtime
-```
-If you prefer not using conda, you can also install the dependencies listed in `install.sh` manually. 
-
-If you want to run OpenAI models through their API (doesn't require access to a GPU), add your openai api key to `~/.bashrc` with
-```
-echo "export OPENAI_API_KEY=<your key>" >> ~/.bashrc
-```
-
-Finally, if you have a diffferent OpenAI API base, change it in your `~/.bashrc` with
-```
-echo "export OPENAI_API_BASE=<your base url>" >> ~/.bashrc
+pip install -r requirements.txt
 ```
 
 ## 🚀 Trying out LLMTime
-Want a quick taste of the power of LLMTime? Run the quick demo in the `demo.ipynb` notebook. No GPUs required!
+Want a quick taste of the power of LLMTime? Run the quick demo in the `demo.ipynb` notebook or the `demo.py` script.
+
+Make sure your `.env` file is configured correctly. You can switch between different LLM providers like GPT and Gemini by changing the `LLM_PROVIDER` variable in the `.env` file.
 
 ## 🤖 Plugging in other LLMs
-We currently support GPT-3, GPT-3.5, GPT-4, Mistral, and LLaMA 2. It's easy to plug in other LLMs by simply specifying how to generate text completions from them in `models/llms.py`.
+We currently support GPT-3, GPT-3.5, GPT-4, Gemini (Flash and Pro), Mistral, and LLaMA 2. You can easily plug in other LLMs by adding a completion function in `models/` and registering it in `models/llms.py`.
 
-To run Mistral models, add your mistral api key to `~/.bashrc` with
-```
-echo "export MISTRAL_KEY=<your key>" >> ~/.bashrc
-```
+You can also experiment with different settings for each model by modifying the `*_hypers` dictionaries in `demo.ipynb` or `demo.py`.
 
 ## 💡 Tips 
 Here are some tips for using LLMTime:

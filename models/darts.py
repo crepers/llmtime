@@ -242,4 +242,3 @@ def get_arima_predictions_data(train, test, p=12, d=1, q=0, num_samples=100, **k
     }
 
     return out_dict
-

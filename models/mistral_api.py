@@ -4,6 +4,9 @@ import tiktoken
 import os
 import numpy as np
 from jax import grad,vmap
+from dotenv import load_dotenv
+
+load_dotenv()
 
 loaded_model=''
 mistral_client={}
@@ -15,7 +18,10 @@ def init_mistral_client(model):
     global loaded_model, mistral_client
     if mistral_client == {} or loaded_model != model:
         loaded_model = model
-        mistral_client = Mistral(os.environ['MISTRAL_KEY'])
+        api_key = os.environ.get('MISTRAL_KEY')
+        if not api_key:
+            raise ValueError("MISTRAL_KEY is not set in the .env file or environment variables.")
+        mistral_client = Mistral(api_key=api_key)
     return mistral_client
 
 def tokenize_fn(str, model):

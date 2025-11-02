@@ -1,0 +1,29 @@
+# Core data and scientific computing
+numpy
+pandas<2.0.0
+matplotlib
+statsmodels
+
+# Machine Learning and Deep Learning
+torch
+jax
+jaxlib
+gpytorch
+darts
+scikit-learn
+
+# LLM Providers and Tooling
+openai==0.28.1
+google-generativeai
+mistralai
+tiktoken
+transformers
+SentencePiece
+accelerate
+
+# Utilities
+python-dotenv
+tqdm
+datasets
+multiprocess
+gdown
