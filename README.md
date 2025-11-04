@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ```
 It is recommended to use a virtual environment. For example, with conda:
 ```bash
-conda create -n llmtime python=3.10
+conda create -n llmtime python=3.11
 conda activate llmtime
 pip install -r requirements.txt
 ```
@@ -31,7 +31,7 @@ pip install -r requirements.txt
 This project also supports [Google's TimesFM](https://github.com/google-research/timesfm), a powerful, pretrained time-series foundation model.
 
 **Requirements:**
-- To use TimesFM, you must have **Python 3.10 or higher**.
+- To use TimesFM, you must have **Python 3.11 or higher**.
 
 **Installation:**
 You can install the official `timesfm` package along with its dependencies using the following command, as recommended on their [Hugging Face page](https://huggingface.co/google/timesfm-2.5-200m-pytorch):
