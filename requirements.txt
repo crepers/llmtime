@@ -1,6 +1,6 @@
 # Core data and scientific computing
 numpy
-pandas<2.0.0
+pandas
 matplotlib
 statsmodels
 

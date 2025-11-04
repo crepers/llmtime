@@ -228,6 +228,11 @@ def get_llmtime_predictions_data(train, test, model, settings, num_samples=10, t
         preds, completions_list, input_strs = generate_predictions(completion_fn, input_strs, steps, settings, scalers,
                                                                     num_samples=num_samples, temp=temp, 
                                                                     parallel=parallel, **kwargs)
+        # Handle cases where prediction fails and returns None
+        if any(p is None for p in preds):
+            print("Warning: One or more predictions failed and returned None. Replacing with empty list.")
+            preds = [p if p is not None else [] for p in preds]
+
         samples = [pd.DataFrame(preds[i], columns=test[i].index) for i in range(len(preds))]
         medians = [sample.median(axis=0) for sample in samples]
         samples = samples if len(samples) > 1 else samples[0]
