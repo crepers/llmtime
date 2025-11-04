@@ -27,11 +27,6 @@ conda activate llmtime
 pip install -r requirements.txt
 ```
 
-## 🚀 Trying out LLMTime
-Want a quick taste of the power of LLMTime? Run the quick demo in the `demo.ipynb` notebook or the `demo.py` script.
-
-Make sure your `.env` file is configured correctly. You can switch between different LLM providers like GPT and Gemini by changing the `LLM_PROVIDER` variable in the `.env` file.
-
 ## ✨ Using TimesFM
 This project also supports [Google's TimesFM](https://github.com/google-research/timesfm), a powerful, pretrained time-series foundation model.
 
@@ -46,6 +41,11 @@ cd timesfm
 pip install -e .
 ```
 Note: This is already included in the `requirements.txt` file.
+
+## 🚀 Trying out LLMTime
+Want a quick taste of the power of LLMTime? Run the quick demo in the `demo.ipynb` notebook or the `demo.py` script.
+
+Make sure your `.env` file is configured correctly. You can switch between different LLM providers like GPT and Gemini by changing the `LLM_PROVIDER` variable in the `.env` file.
 
 ## 🤖 Plugging in other LLMs
 We currently support GPT-3, GPT-3.5, GPT-4, Gemini (Flash and Pro), TimesFM, Mistral, and LLaMA 2. You can easily plug in other LLMs by adding a completion function in `models/` and registering it in `models/llms.py`.
