@@ -40,7 +40,7 @@ git clone https://github.com/google-research/timesfm.git
 cd timesfm
 pip install -e .
 ```
-Note: This is already included in the `requirements.txt` file.
+Note: This is not included in the `requirements.txt` file.
 
 ## 🚀 Trying out LLMTime
 Want a quick taste of the power of LLMTime? Run the quick demo in the `demo.ipynb` notebook or the `demo.py` script.
