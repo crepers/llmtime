@@ -31,6 +31,7 @@ from models.darts import get_arima_predictions_data
 from models.llmtime import get_llmtime_predictions_data
 from data.small_context import get_datasets
 from models.validation_likelihood_tuning import get_autotuned_predictions_data
+from models.timesfm import get_timesfm_predictions_data
 
 def plot_preds(train, test, pred_dict, model_name, show_samples=False):
     pred = pred_dict['median']
@@ -57,11 +58,6 @@ def plot_preds(train, test, pred_dict, model_name, show_samples=False):
             plt.text(0.03, 0.85, f'NLL/D: {nll:.2f}', transform=plt.gca().transAxes, bbox=dict(facecolor='white', alpha=0.5))
     plt.show()
 
-
-
-print(torch.cuda.max_memory_allocated())
-print()
-
 gpt4_hypers = dict(
     alpha=0.3,
     basic=True,
@@ -87,17 +83,21 @@ gpt3_hypers = dict(
 )
 
 gemini_flash_hypers = dict(
-    temp=0.3, # Keep lower temperature for stability
-    alpha=0.3,  # Align with gpt4_hypers
-    basic=True, # Align with gpt4_hypers
-    settings=SerializerSettings(base=10, prec=3, signed=True, time_sep=', ', bit_sep='', minus_sign='-') # Fully align with gpt4_hypers
+    temp=0.3, 
+    alpha=0.3,  
+    beta=0.5,   # 안정성을 위해 중간값 강조
+    top_p=0.5,
+    basic=False, 
+    settings=SerializerSettings(base=10, prec=3, signed=True, time_sep=', ', bit_sep='', minus_sign='-', half_bin_correction=True)
 )
 
 gemini_pro_hypers = dict(
-    temp=0.3, # Keep lower temperature for stability
-    alpha=0.3,  # Align with gpt4_hypers
-    basic=True, # Align with gpt4_hypers
-    settings=SerializerSettings(base=10, prec=3, signed=True, time_sep=', ', bit_sep='', minus_sign='-') # Fully align with gpt4_hypers
+    temp=0.3,   # 낮은 온도로 안정적인 예측 유도
+    alpha=0.3,  # 데이터의 넓은 범위를 보고 스케일링하여 안정성 확보
+    beta=0.5,   # 안정성을 위해 중간값 강조
+    top_p=0.5,  # 추천하는 top_p 값
+    basic=False, # 최솟값을 빼는 표준 스케일링 방식 사용
+    settings=SerializerSettings(base=10, prec=3, signed=True, time_sep=', ', bit_sep='', minus_sign='-',  half_bin_correction=False)
 )
 
 
@@ -136,25 +136,17 @@ elif LLM_PROVIDER == 'gemini':
     model_hypers = {
         'LLMTime Gemini Flash 2.5': {'model': 'gemini-2.5-flash', **gemini_flash_hypers},
         'LLMTime Gemini 2.5 Pro': {'model': 'gemini-2.5-pro', **gemini_pro_hypers},
+        'TimesFM': {}, # TimesFM has no hyperparameters to tune in this context
         'ARIMA': arima_hypers,
     }
     model_predict_fns = {
         'LLMTime Gemini Flash 2.5': get_llmtime_predictions_data,
         'LLMTime Gemini 2.5 Pro': get_llmtime_predictions_data,
-        'ARIMA': get_arima_predictions_data,
-    }
-elif LLM_PROVIDER == 'mistral':
-    print("Using Mistral models for testing.")
-    model_hypers = {
-        'mistral-api-tiny': {'model': 'mistral-api-tiny', **gemini_hypers}, # Using gemini_hypers as a stand-in
-        'ARIMA': arima_hypers,
-    }
-    model_predict_fns = {
-        'mistral-api-tiny': get_llmtime_predictions_data,
+        'TimesFM': get_timesfm_predictions_data,
         'ARIMA': get_arima_predictions_data,
     }
 else:
-    print(f"Unknown or unconfigured LLM_PROVIDER: '{LLM_PROVIDER}'. Running only ARIMA model.")
+    print(f"Unknown LLM_PROVIDER: '{LLM_PROVIDER}'. Running only ARIMA model.")
     model_hypers = {
         'ARIMA': arima_hypers,
     }
@@ -181,11 +173,18 @@ for model in model_names: # GPT-4 takes a about a minute to run
 
     if 'PromptCast' in model:
         model_hypers[model].update({'dataset_name': ds_name}) # for promptcast
-    hypers = list(grid_iter(model_hypers[model]))
+
     num_samples = 10
-    # CRITICAL FIX: Pass copies of the data to the prediction function
-    # This protects the original train/test data from being modified by any model (like ARIMA).
-    pred_dict = get_autotuned_predictions_data(train.copy(), test.copy(), hypers, num_samples, model_predict_fns[model], verbose=False, parallel=False)
+    
+    # TimesFM does not have hyperparameters to tune, so we call it directly.
+    if model == 'TimesFM':
+        pred_dict = get_timesfm_predictions_data(train.copy(), test.copy(), num_samples=num_samples)
+    else:
+        hypers = list(grid_iter(model_hypers[model]))
+
+        # This protects the original train/test data from being modified by any model (like ARIMA).
+        pred_dict = get_autotuned_predictions_data(train.copy(), test.copy(), hypers, num_samples, model_predict_fns[model], verbose=False, parallel=False)
+
     out[model] = pred_dict
     
     # Safe logging: Check if train object has an index before printing

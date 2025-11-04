@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ```
 It is recommended to use a virtual environment. For example, with conda:
 ```bash
-conda create -n llmtime python=3.9
+conda create -n llmtime python=3.10
 conda activate llmtime
 pip install -r requirements.txt
 ```
@@ -32,8 +32,23 @@ Want a quick taste of the power of LLMTime? Run the quick demo in the `demo.ipyn
 
 Make sure your `.env` file is configured correctly. You can switch between different LLM providers like GPT and Gemini by changing the `LLM_PROVIDER` variable in the `.env` file.
 
+## ✨ Using TimesFM
+This project also supports [Google's TimesFM](https://github.com/google-research/timesfm), a powerful, pretrained time-series foundation model.
+
+**Requirements:**
+- To use TimesFM, you must have **Python 3.10 or higher**.
+
+**Installation:**
+You can install the official `timesfm` package along with its dependencies using the following command, as recommended on their [Hugging Face page](https://huggingface.co/google/timesfm-2.5-200m-pytorch):
+```bash
+git clone https://github.com/google-research/timesfm.git
+cd timesfm
+pip install -e .
+```
+Note: This is already included in the `requirements.txt` file.
+
 ## 🤖 Plugging in other LLMs
-We currently support GPT-3, GPT-3.5, GPT-4, Gemini (Flash and Pro), Mistral, and LLaMA 2. You can easily plug in other LLMs by adding a completion function in `models/` and registering it in `models/llms.py`.
+We currently support GPT-3, GPT-3.5, GPT-4, Gemini (Flash and Pro), TimesFM, Mistral, and LLaMA 2. You can easily plug in other LLMs by adding a completion function in `models/` and registering it in `models/llms.py`.
 
 You can also experiment with different settings for each model by modifying the `*_hypers` dictionaries in `demo.ipynb` or `demo.py`.
 
